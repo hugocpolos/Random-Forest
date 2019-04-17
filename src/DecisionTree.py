@@ -1,12 +1,17 @@
 from src.InfoGain import best_info_gain
+from src.Colors import Colors as c
 
 
-def get_most_commom(D):
+def get_most_commom(D, target_class):
+    """
+        Return the most common attribute of the target_class
+        in a dataset D.
+    """
     counter = {}
     for i in range(len(D)):
-        counter[D[i][self.dataset.predictclass]] = 0
+        counter[D[i][target_class]] = 0
     for i in range(len(D)):
-        counter[D[i][self.dataset.predictclass]] += 1
+        counter[D[i][target_class]] += 1
     max_val = 0
     most_commom = ""
     for key, value in counter.items():
@@ -36,14 +41,20 @@ class DecisionTree(object):
         super(DecisionTree, self).__init__()
         self.dataset = dataset
         self.Tree = None
+        self.error = None
+        self.create()
 
     def create(self):
         """
             Public method to create a tree from the loaded dataset
         """
-        training_data = self.dataset.data
-        attributes = self.dataset.attributes
-        self.Tree = self.__pvt_build_tree_recursive(training_data, attributes)
+        try:
+            training_data = self.dataset.data
+            attributes = self.dataset.attributes
+            self.Tree = self.__pvt_build_tree_recursive(
+                training_data, attributes)
+        except Exception as e:
+            self.error = e
 
     def __pvt_build_tree_recursive(self, D, L):
         """
@@ -72,7 +83,8 @@ class DecisionTree(object):
         # rotulado com a classe y mais frequente em D.
 
         if len(L) == 0:
-            new_node.set_label(get_most_commom(D), True)
+            new_node.set_label(get_most_commom(
+                D, self.dataset.predictclass), True)
             return new_node
 
         # 4.Senão
@@ -99,7 +111,8 @@ class DecisionTree(object):
             # 4.4.2 Se Dv vazio, então retorn N como um nó folha rotulado com
             #       a classe yi mais frequente em Dv.
             if len(Dv) == 0:
-                new_node.set_label(get_most_commom(Dv))
+                new_node.set_label(get_most_commom(
+                    Dv, self.dataset.predictclass))
                 return new_node
             # 4.4.3 Senão, associe N a uma subárvore retornada por f(Dv,L)
             else:
@@ -120,9 +133,9 @@ class DecisionTree(object):
         for i in range(space * self.__div):
             retval += ' '
         if(node.labeled):
-            retval += f'   {self.dataset.predictclass}: \033[92m{(node.label)}\033[0m\n'
+            retval += f"   {self.dataset.predictclass}:{c.OKGREEN+node.label+c.ENDC}\n"
         else:
-            retval += f'label: \033[94m{(node.label)}\033[0m\n'
+            retval += f'label: {c.OKBLUE+node.label+c.ENDC}\n'
         if(len(node.child) > 0):
             for i in range(space * self.__div):
                 retval += ' '
@@ -131,7 +144,7 @@ class DecisionTree(object):
             for child in node.child:
                 for i in range(space * self.__div):
                     retval += ' '
-                retval += f'\033[95m{child}\033[0m'
+                retval += f'{c.HEADER+child+c.ENDC}'
 
                 retval += self.__print(node.child[child], space)
         else:
