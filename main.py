@@ -1,5 +1,5 @@
 from src.Dataset import Dataset
-from src.DecisionTree import DecisionTree, _Node
+from src.DecisionTree import DecisionTree
 from sys import argv
 
 
@@ -35,7 +35,9 @@ if __name__ == '__main__':
 
         # generates a decision tree from the dataset
         tree = DecisionTree(db)
-        tree.create()
+        if tree.error is not None:
+            print(tree.error)
+            exit(0)
 
         # print the resultant tree on the terminal
         print(tree)
