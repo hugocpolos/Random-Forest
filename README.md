@@ -51,7 +51,7 @@ pipenv can be installed with [pip](https://docs.python.org/3/installing/index.ht
 
 #### Installing new dependencies to the virtual environment
 
-while not running the virtual env.
+while not running the virtual env:
 
 	> cd Pipfile_directory
 	> pipenv install package_name
