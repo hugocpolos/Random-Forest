@@ -50,7 +50,7 @@ class DecisionTree(object):
         """
         try:
             training_data = self.dataset.data
-            attributes = self.dataset.attributes
+            attributes = self.dataset.attributes.copy()
             self.Tree = self.__pvt_build_tree_recursive(
                 training_data, attributes)
         except Exception as e:
