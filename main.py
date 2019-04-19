@@ -28,10 +28,7 @@ if __name__ == '__main__':
         delimiter = argv[2] if len(argv) is 3 else ';'
 
         # load the dataset to memory
-        db = Dataset(argv[1], delimiter=delimiter)
-        if db.error is not None:
-            print(db.error)
-            exit(0)
+        db = Dataset(argv[1], delimiter=delimiter, ignore='age')
 
         # generates a decision tree from the dataset
         tree = DecisionTree(db)
@@ -40,4 +37,8 @@ if __name__ == '__main__':
             exit(0)
 
         # print the resultant tree on the terminal
+        # print(db.attributes)
+        print()
+        print()
+        # print(db.data)
         print(tree)

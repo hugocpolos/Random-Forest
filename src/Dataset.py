@@ -8,6 +8,11 @@ class Dataset(object):
         filename (str): path to the csv file
         delimiter (str): delimiter character of the csv file,
                          the default value is ';'
+        predictclass (str): class to be predicted,
+                            if the arg is None, then the
+                            predict class will be the one at the last
+                            column.
+        ignore (list): list of attributes to be ignored during the dataset load
 
     Attributes:
         attributes (list): List with the dataset attributes
@@ -19,23 +24,59 @@ class Dataset(object):
 
         values (list): 2-dimensional list containing just the values
                        of each attribute
-        error (exception class): is None if the construction was successful
-                                otherwise stores the Exception that crashed it.
     """
 
-    def __init__(self, filename, delimiter=';'):
+    def __init__(self, filename, delimiter=';', predictclass=None, ignore=[]):
         super(Dataset, self).__init__()
-        self.error = None
-        try:
-            _dict_ = csv.DictReader(open(filename), delimiter=delimiter)
-            self.attributes = _dict_.fieldnames.copy()
+
+        # Test the args
+        if (type(delimiter) is not str) and (len(delimiter) is not 1):
+            raise TypeError("delimiter must be a single character string.")
+        if (type(predictclass) is not str) and (predictclass is not None):
+            raise TypeError("predictclass must be a string.")
+        if (type(ignore) is not list):
+            if(type(ignore) is str):
+                ignore = [ignore]
+            else:
+                raise TypeError(
+                    "ignore must be a string or a list of strings.")
+
+        # Reads the csv file to memory
+        _dict_ = csv.DictReader(open(filename), delimiter=delimiter)
+
+        # Stores all attributes from the dataset
+        self.attributes = _dict_.fieldnames.copy()
+
+        # If predict class wasn't passed as argument, then
+        # the default value is the last attribute.
+        # If the predict class was passed, it is tested to check if
+        # the class exists in the dataset.
+        if predictclass is None:
             self.predictclass = self.attributes[-1]
-            self.attributes.remove(self.predictclass)
-            self.data = [dict(x) for x in _dict_]
-            self.values = [list(x.values()) for x in self.data]
-        except Exception as e:
-            print(type(e))
-            self.error = e
+        else:
+            self.predictclass = predictclass
+            if self.predictclass not in self.attributes:
+                raise Exception(
+                    "Class '%s' was not found in %s"
+                    % (self.predictclass, filename))
+
+        # Removes the predict class of the attribute list
+        self.attributes.remove(self.predictclass)
+
+        # Removes the ignored attributes of the attribute list
+        for ignored_class in ignore:
+            self.attributes.remove(ignored_class)
+
+        # load the data into the dict format
+        self.data = [dict(x) for x in _dict_]
+
+        # remove all entries of the ignored classes
+        for a in self.data:
+            for ignored_class in ignore:
+                del a[ignored_class]
+
+        # store a 2d-list of only the values for each attribute
+        self.values = [list(x.values()) for x in self.data]
 
     def __str__(self):
         """
