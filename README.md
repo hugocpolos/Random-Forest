@@ -59,4 +59,15 @@ while not running the virtual env:
 It will include the dependency in the Pipfile, so these changes have to be committed.  
 Running pip install inside the virtual env will install the package just to the env, but wont be includede in the Pipfile.
 
+
+## Linux
+
+On linux, you may have the following error when running the GUI
+	
+	ModuleNotFoundError: No module named 'Tkinter'
+
+In this case, you'll have to install the package python3-tk in order to run the gui version.
+
+	sudo apt-get install python3-tk
+
 ---
