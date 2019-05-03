@@ -1,0 +1,15 @@
+age;income;student;creditRating;buysComputer
+18;high;no;fair;no
+21;high;no;excellent;no
+38;high;no;fair;yes
+54;medium;no;fair;yes
+61;low;yes;fair;yes
+56;low;yes;excellent;no
+36;low;yes;excellent;yes
+21;medium;no;fair;no
+22;low;yes;fair;yes
+59;medium;yes;fair;yes
+23;medium;yes;excellent;yes
+35;medium;no;excellent;yes
+40;high;yes;fair;yes
+64;medium;no;excellent;no

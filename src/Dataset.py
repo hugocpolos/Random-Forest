@@ -1,4 +1,5 @@
 import csv
+import json
 
 
 class Dataset(object):
@@ -26,7 +27,8 @@ class Dataset(object):
                        of each attribute
     """
 
-    def __init__(self, filename, delimiter=';', predictclass=None, ignore=[]):
+    def __init__(self, filename, delimiter=';', predictclass=None, ignore=[],
+                 metadata=None):
         super(Dataset, self).__init__()
 
         # Test the args
@@ -40,6 +42,17 @@ class Dataset(object):
             else:
                 raise TypeError(
                     "ignore must be a string or a list of strings.")
+        if (type(metadata) is not str):
+            raise TypeError("metadata must be a string.")
+
+        # Load the metadata
+        numeric = []
+        if metadata is not None:
+            with open(metadata) as json_file:
+                d = json.load(json_file)
+                numeric = d['numeric']
+                ignore += d['ignore']
+
 
         # Reads the csv file to memory
         _dict_ = csv.DictReader(open(filename), delimiter=delimiter)
