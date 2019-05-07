@@ -45,7 +45,7 @@ class Dataset(object):
             else:
                 raise TypeError(
                     "ignore must be a string or a list of strings.")
-        if (type(metadata) is not str):
+        if (type(metadata) is not str and metadata is not None):
             raise TypeError("metadata must be a string.")
 
         # Load the metadata
