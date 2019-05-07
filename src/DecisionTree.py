@@ -133,9 +133,9 @@ class DecisionTree(object):
         for i in range(space * self.__div):
             retval += ' '
         if(node.labeled):
-            retval += f"   {self.dataset.predictclass}:{c.OKGREEN+node.label+c.ENDC}\n"
+            retval += "   %s:%s\n" %(self.dataset.predictclass, c.OKGREEN+node.label+c.ENDC)
         else:
-            retval += f'label: {c.OKBLUE+node.label+c.ENDC}\n'
+            retval += 'label: %s\n' % (c.OKBLUE+node.label+c.ENDC)
         if(len(node.child) > 0):
             for i in range(space * self.__div):
                 retval += ' '
@@ -144,7 +144,7 @@ class DecisionTree(object):
             for child in node.child:
                 for i in range(space * self.__div):
                     retval += ' '
-                retval += f'{c.HEADER+child+c.ENDC}'
+                retval += '%s'%(c.HEADER+child+c.ENDC)
 
                 retval += self.__print(node.child[child], space)
         else:
