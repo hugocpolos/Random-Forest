@@ -25,6 +25,9 @@ class Dataset(object):
 
         values (list): 2-dimensional list containing just the values
                        of each attribute
+        
+        numeric (dict): Stores all numerical categories and its cut value.
+
     """
 
     def __init__(self, filename, delimiter=';', predictclass=None, ignore=[],
@@ -46,11 +49,12 @@ class Dataset(object):
             raise TypeError("metadata must be a string.")
 
         # Load the metadata
-        numeric = []
+        self.numeric = {}
         if metadata is not None:
             with open(metadata) as json_file:
                 d = json.load(json_file)
-                numeric = d['numeric']
+                for attrib in d['numeric']:
+                    self.numeric[attrib] = 0
                 ignore += d['ignore']
 
 
@@ -90,6 +94,17 @@ class Dataset(object):
 
         # store a 2d-list of only the values for each attribute
         self.values = [list(x.values()) for x in self.data]
+        self.__calculate_numerical_cut_value__()
+
+    def __calculate_numerical_cut_value__(self):
+        for attrib in self.attributes:
+            if attrib in self.numeric:
+                avg_value = 0
+                index = self.attributes.index(attrib)
+                for value in self.data:
+                    avg_value += int(value[attrib])
+                avg_value /= (len(self.data))
+                self.numeric[attrib] = avg_value
 
     def __str__(self):
         """
