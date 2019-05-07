@@ -76,7 +76,7 @@ class DecisionTree(object):
             if (class_to_compare != D[i][self.dataset.predictclass]):
                 all_classes_equal = False
         if all_classes_equal is True:
-            new_node.set_label(class_to_compare, True)
+            new_node.set_label(class_to_compare, leaf=True)
             return new_node
 
         # 3. Se L é vazia, então retorn N como um nó folha
@@ -84,7 +84,7 @@ class DecisionTree(object):
 
         if len(L) == 0:
             new_node.set_label(get_most_commom(
-                D, self.dataset.predictclass), True)
+                D, self.dataset.predictclass), leaf=True)
             return new_node
 
         # 4.Senão
@@ -154,14 +154,16 @@ class DecisionTree(object):
 
 
 class _Node(object):
-    """Node of a tree Class"""
+    """Node of a tree Class
+        leaf: if the node is a leaf node or no
+    """
 
     def __init__(self):
         super(_Node, self).__init__()
-        self.labeled = bool()
+        self.leaf = bool()
         self.label = str()
         self.child = dict()
 
-    def set_label(self, label, labeled=False):
+    def set_label(self, label, leaf=False):
         self.label = label
-        self.labeled = labeled
+        self.leaf = leaf
