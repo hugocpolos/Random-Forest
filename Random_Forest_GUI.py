@@ -23,7 +23,7 @@ class GUI_Class:
         try:
             self.root.call('wm', 'iconphoto',
                            self.root._w, PhotoImage(file=favicon))
-        except OSError:
+        except (OSError, TclError, NameError):
             pass
 
     def start(self):
