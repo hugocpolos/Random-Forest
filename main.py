@@ -28,7 +28,7 @@ if __name__ == '__main__':
         delimiter = argv[2] if len(argv) is 3 else ';'
 
         # load the dataset to memory
-        db = Dataset(argv[1], delimiter=delimiter, metadata='data/buysComputer_num_meta.json')
+        db = Dataset(argv[1], delimiter=delimiter)
 
         # generates a decision tree from the dataset
         tree = DecisionTree(db)

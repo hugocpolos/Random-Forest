@@ -25,7 +25,7 @@ class Dataset(object):
 
         values (list): 2-dimensional list containing just the values
                        of each attribute
-        
+
         numeric (dict): Stores all numerical categories and its cut value.
 
     """
@@ -56,7 +56,6 @@ class Dataset(object):
                 for attrib in d['numeric']:
                     self.numeric[attrib] = 0
                 ignore += d['ignore']
-
 
         # Reads the csv file to memory
         _dict_ = csv.DictReader(open(filename), delimiter=delimiter)

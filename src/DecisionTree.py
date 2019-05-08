@@ -76,7 +76,7 @@ class DecisionTree(object):
             if (class_to_compare != D[i][self.dataset.predictclass]):
                 all_classes_equal = False
         if all_classes_equal is True:
-            new_node.set_label(class_to_compare, leaf=True)
+            new_node.set_label(class_to_compare, is_leaf=True)
             return new_node
 
         # 3. Se L é vazia, então retorn N como um nó folha
@@ -84,7 +84,7 @@ class DecisionTree(object):
 
         if len(L) == 0:
             new_node.set_label(get_most_commom(
-                D, self.dataset.predictclass), leaf=True)
+                D, self.dataset.predictclass), is_leaf=True)
             return new_node
 
         # 4.Senão
@@ -132,10 +132,11 @@ class DecisionTree(object):
         retval = '\n'
         for i in range(space * self.__div):
             retval += ' '
-        if(node.labeled):
-            retval += "   %s:%s\n" %(self.dataset.predictclass, c.OKGREEN+node.label+c.ENDC)
+        if(node.is_leaf):
+            retval += "   %s:%s\n" % (self.dataset.predictclass,
+                                      c.OKGREEN + node.label + c.ENDC)
         else:
-            retval += 'label: %s\n' % (c.OKBLUE+node.label+c.ENDC)
+            retval += 'label: %s\n' % (c.OKBLUE + node.label + c.ENDC)
         if(len(node.child) > 0):
             for i in range(space * self.__div):
                 retval += ' '
@@ -144,7 +145,7 @@ class DecisionTree(object):
             for child in node.child:
                 for i in range(space * self.__div):
                     retval += ' '
-                retval += '%s'%(c.HEADER+child+c.ENDC)
+                retval += '%s' % (c.HEADER + child + c.ENDC)
 
                 retval += self.__print(node.child[child], space)
         else:
@@ -155,15 +156,15 @@ class DecisionTree(object):
 
 class _Node(object):
     """Node of a tree Class
-        leaf: if the node is a leaf node or no
+        is_leaf: if the node is a leaf node or no
     """
 
     def __init__(self):
         super(_Node, self).__init__()
-        self.leaf = bool()
+        self.is_leaf = bool()
         self.label = str()
         self.child = dict()
 
-    def set_label(self, label, leaf=False):
+    def set_label(self, label, is_leaf=False):
         self.label = label
-        self.leaf = leaf
+        self.is_leaf = is_leaf
