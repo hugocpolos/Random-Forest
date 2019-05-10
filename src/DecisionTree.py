@@ -127,6 +127,15 @@ class DecisionTree(object):
             Greater = [x for x in D if (
                 float(x[A]) >= self.numerical_attributes[A])]
 
+            if (len(Greater) is 0 or len(Lesser) is 0):
+                new_node.set_label(get_most_commom(
+                    D, self.predictclass))
+                return new_node
+
+            # 4.4.2 Se Lesser ou Greater for vazio,
+            # então retorn N como um nó folha rotulado com
+            # a classe yi mais frequente em D.
+
             new_node.child['<' + str(self.numerical_attributes[A])] = self.__pvt_build_tree_recursive(
                 Lesser, L)
 
@@ -140,11 +149,11 @@ class DecisionTree(object):
             for key, val in counter.items():
                 # 4.4.1 Dv = subconjunto dos dados de treinamento em que A = v'
                 Dv = [x for x in D if (x[A] == key)]
-                # 4.4.2 Se Dv vazio, então retorn N como um nó folha rotulado com
-                #       a classe yi mais frequente em Dv.
+                # 4.4.2 Se Dv vazio, então retorn N como um nó folha
+                # rotulado com a classe yi mais frequente em D.
                 if len(Dv) == 0:
                     new_node.set_label(get_most_commom(
-                        Dv, self.predictclass))
+                        D, self.predictclass))
                     return new_node
                 # 4.4.3 Senão, associe N a uma subárvore retornada por f(Dv,L)
                 else:
@@ -165,6 +174,9 @@ class DecisionTree(object):
         retval = '\n'
         for i in range(space * self.__div):
             retval += ' '
+        if node is None:
+            print('fim')
+            exit(0)
         if(node.is_leaf):
             retval += "   %s:%s\n" % (self.predictclass,
                                       c.OKGREEN + node.label + c.ENDC)
