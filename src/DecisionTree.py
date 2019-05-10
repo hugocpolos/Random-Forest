@@ -37,9 +37,11 @@ class DecisionTree(object):
                                 otherwise stores the Exception that crashed it.
     """
 
-    def __init__(self, dataset):
+    def __init__(self, dataset, attributes, predictclass):
         super(DecisionTree, self).__init__()
         self.dataset = dataset
+        self.attributes = attributes.copy()
+        self.predictclass = predictclass
         self.Tree = None
         self.error = None
         self.create()
@@ -49,11 +51,10 @@ class DecisionTree(object):
             Public method to create a tree from the loaded dataset
         """
         try:
-            training_data = self.dataset.data
-            attributes = self.dataset.attributes.copy()
             self.Tree = self.__pvt_build_tree_recursive(
-                training_data, attributes)
+                self.dataset, self.attributes)
         except Exception as e:
+            print(e)
             self.error = e
 
     def __pvt_build_tree_recursive(self, D, L):
@@ -70,10 +71,10 @@ class DecisionTree(object):
 
         # 2. Se todos os exemplos em D possuem a mesma classe y,
         # então retorna N como um nó folha rotulado com y.
-        class_to_compare = D[0][self.dataset.predictclass]
+        class_to_compare = D[0][self.predictclass]
         all_classes_equal = True
         for i in range(len(D)):
-            if (class_to_compare != D[i][self.dataset.predictclass]):
+            if (class_to_compare != D[i][self.predictclass]):
                 all_classes_equal = False
         if all_classes_equal is True:
             new_node.set_label(class_to_compare, is_leaf=True)
@@ -84,14 +85,14 @@ class DecisionTree(object):
 
         if len(L) == 0:
             new_node.set_label(get_most_commom(
-                D, self.dataset.predictclass), is_leaf=True)
+                D, self.predictclass), is_leaf=True)
             return new_node
 
         # 4.Senão
         # 4.1 A = atributo que apresenta melhor critério de divisão.
         # Esse cálculo será realizado utilizando o método de ganho
         # de informação.
-        A = best_info_gain(D, L, self.dataset.predictclass)
+        A = best_info_gain(D, L, self.predictclass)
         # 4.2 Associe A ao nó N
         new_node.set_label(A)
         # 4.3 L = L - {A}
@@ -112,7 +113,7 @@ class DecisionTree(object):
             #       a classe yi mais frequente em Dv.
             if len(Dv) == 0:
                 new_node.set_label(get_most_commom(
-                    Dv, self.dataset.predictclass))
+                    Dv, self.predictclass))
                 return new_node
             # 4.4.3 Senão, associe N a uma subárvore retornada por f(Dv,L)
             else:
@@ -133,7 +134,7 @@ class DecisionTree(object):
         for i in range(space * self.__div):
             retval += ' '
         if(node.is_leaf):
-            retval += "   %s:%s\n" % (self.dataset.predictclass,
+            retval += "   %s:%s\n" % (self.predictclass,
                                       c.OKGREEN + node.label + c.ENDC)
         else:
             retval += 'label: %s\n' % (c.OKBLUE + node.label + c.ENDC)

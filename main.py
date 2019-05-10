@@ -28,17 +28,26 @@ if __name__ == '__main__':
         delimiter = argv[2] if len(argv) is 3 else ';'
 
         # load the dataset to memory
-        db = Dataset(argv[1], delimiter=delimiter)
+        tree_forest = []
+        db = Dataset(argv[1], delimiter=delimiter,
+                     metadata=None, bootstrap_n=5)
 
+        for training_set in db.training_set:
+            # print(training_set)
+            tree_forest.append(DecisionTree(
+                training_set, db.attributes, db.predictclass))
+
+        for tree in tree_forest:
+            print(tree)
         # generates a decision tree from the dataset
-        tree = DecisionTree(db)
-        if tree.error is not None:
-            print(tree.error)
-            exit(0)
+        # tree = DecisionTree(db)
+        # if tree.error is not None:
+        #     print(tree.error)
+        #     exit(0)
 
         # print the resultant tree on the terminal
         # print(db.attributes)
         print()
         print()
         # print(db.data)
-        print(tree)
+        # print(tree)

@@ -96,7 +96,7 @@ class Dataset(object):
                 del a[ignored_class]
 
         # store a 2d-list of only the values for each attribute
-        self.values = [list(x.values()) for x in self.data]
+        # self.values = [list(x.values()) for x in self.data]
         self.__calculate_numerical_cut_value__()
         self.__generate_bootstrap(bootstrap_n)
 

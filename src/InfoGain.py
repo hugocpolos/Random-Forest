@@ -2,17 +2,17 @@ import math
 
 
 def best_info_gain(D, L, predict_class):
-    info = __Info(D, predict_class)
+    dataset_info = __Dataset_Info(D, predict_class)
     gain = {}
     for attribute in L:
-        gain[attribute] = info - __Info_class(D, attribute, predict_class)
+        gain[attribute] = dataset_info - __Info_class(D, attribute, predict_class)
     # print(gain)
     v = list(gain.values())
     k = list(gain.keys())
     return k[v.index(max(v))]
 
 
-def __Info(D, predict_class):
+def __Dataset_Info(D, predict_class):
     total = len(D)
     info = 0
     counter = {}
@@ -40,6 +40,6 @@ def __Info_class(D, attribute, predict_class):
 
     for key, val in counter.items():
         sub_D = [x for x in D if (x[attribute] == key)]
-        info += ((val / total) * __Info(sub_D, predict_class))
+        info += ((val / total) * __Dataset_Info(sub_D, predict_class))
 
     return info
