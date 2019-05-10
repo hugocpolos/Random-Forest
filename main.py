@@ -30,12 +30,11 @@ if __name__ == '__main__':
         # load the dataset to memory
         tree_forest = []
         db = Dataset(argv[1], delimiter=delimiter,
-                     metadata=None, bootstrap_n=5)
+                     metadata='data/buysComputer_num_meta.json', bootstrap_n=100)
 
         for training_set in db.training_set:
-            # print(training_set)
             tree_forest.append(DecisionTree(
-                training_set, db.attributes, db.predictclass))
+                training_set, db.attributes, db.predictclass, db.numeric))
 
         for tree in tree_forest:
             print(tree)

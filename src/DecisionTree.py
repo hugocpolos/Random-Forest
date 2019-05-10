@@ -37,13 +37,15 @@ class DecisionTree(object):
                                 otherwise stores the Exception that crashed it.
     """
 
-    def __init__(self, dataset, attributes, predictclass):
+    def __init__(self, dataset, attributes, predictclass, numerical_attributes):
         super(DecisionTree, self).__init__()
         self.dataset = dataset
         self.attributes = attributes.copy()
         self.predictclass = predictclass
+        self.numerical_attributes = numerical_attributes
         self.Tree = None
         self.error = None
+        self.__calculate_numerical_cut_value__()
         self.create()
 
     def create(self):
@@ -56,6 +58,15 @@ class DecisionTree(object):
         except Exception as e:
             print(e)
             self.error = e
+
+    def __calculate_numerical_cut_value__(self):
+        for attrib in self.attributes:
+            if attrib in self.numerical_attributes:
+                avg_value = 0
+                for value in self.dataset:
+                    avg_value += int(value[attrib])
+                avg_value /= (len(self.dataset))
+                self.numerical_attributes[attrib] = avg_value
 
     def __pvt_build_tree_recursive(self, D, L):
         """
@@ -92,7 +103,10 @@ class DecisionTree(object):
         # 4.1 A = atributo que apresenta melhor critério de divisão.
         # Esse cálculo será realizado utilizando o método de ganho
         # de informação.
-        A = best_info_gain(D, L, self.predictclass)
+
+        A = best_info_gain(D, L, self.predictclass,
+                           self.numerical_attributes)
+
         # 4.2 Associe A ao nó N
         new_node.set_label(A)
         # 4.3 L = L - {A}
@@ -100,24 +114,42 @@ class DecisionTree(object):
 
         # 4.4 Para cada valor v distinto do atributo A,
         #     considerando os exemplos em D.
-
-        # counter armazena um dict com os atributos únicos
         counter = {}
-        for i in range(len(D)):
-            counter[D[i][A]] = True
 
-        for key, val in counter.items():
-            # 4.4.1 Dv = subconjunto dos dados de treinamento em que A = v'
-            Dv = [x for x in D if (x[A] == key)]
-            # 4.4.2 Se Dv vazio, então retorn N como um nó folha rotulado com
-            #       a classe yi mais frequente em Dv.
-            if len(Dv) == 0:
-                new_node.set_label(get_most_commom(
-                    Dv, self.predictclass))
-                return new_node
-            # 4.4.3 Senão, associe N a uma subárvore retornada por f(Dv,L)
-            else:
-                new_node.child[key] = self.__pvt_build_tree_recursive(Dv, L)
+        # Trecho para tratar algoritmos numericos #
+        if (A in self.numerical_attributes):
+            # 4.4.1 Lesser = subconjunto dos dados de treinamento em que
+            # A é menor que o valor de corte
+            Lesser = [x for x in D if (
+                float(x[A]) < self.numerical_attributes[A])]
+            # 4.4.1 Greater = subconjunto dos dados de treinamento em que
+            # A é maior que o valor de corte
+            Greater = [x for x in D if (
+                float(x[A]) >= self.numerical_attributes[A])]
+
+            new_node.child['<' + str(self.numerical_attributes[A])] = self.__pvt_build_tree_recursive(
+                Lesser, L)
+
+            new_node.child['>=' + str(self.numerical_attributes[A])] = self.__pvt_build_tree_recursive(
+                Greater, L)
+            # exit(0)
+        else:  # counter armazena um dict com os atributos únicos
+            for i in range(len(D)):
+                counter[D[i][A]] = True
+
+            for key, val in counter.items():
+                # 4.4.1 Dv = subconjunto dos dados de treinamento em que A = v'
+                Dv = [x for x in D if (x[A] == key)]
+                # 4.4.2 Se Dv vazio, então retorn N como um nó folha rotulado com
+                #       a classe yi mais frequente em Dv.
+                if len(Dv) == 0:
+                    new_node.set_label(get_most_commom(
+                        Dv, self.predictclass))
+                    return new_node
+                # 4.4.3 Senão, associe N a uma subárvore retornada por f(Dv,L)
+                else:
+                    new_node.child[key] = self.__pvt_build_tree_recursive(
+                        Dv, L)
         # 4.5 Retorne N
         return new_node
 

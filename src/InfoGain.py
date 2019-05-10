@@ -1,12 +1,36 @@
 import math
+import copy
 
 
-def best_info_gain(D, L, predict_class):
-    dataset_info = __Dataset_Info(D, predict_class)
+def best_info_gain(D, L, predict_class, numerical_attributes):
+    # Creates a copy of the dataset to be handled
+    D_copy = copy.deepcopy(D)
+
+    # Split the numerical values beetwen A-> less than the cut value
+    # and B -> greater or equal to the cut value to make the best info gain
+    # calculation
+    for attrib in L:
+        if attrib in numerical_attributes:
+            avg_val = numerical_attributes[attrib]
+            for entry in D_copy:
+                try:
+                    entry[attrib] = 'A' if float(
+                        entry[attrib]) < avg_val else 'B'
+                except Exception as e:
+                    pass
+
+    # Calculate the information gain of the dataset
+    dataset_info = __Dataset_Info(D_copy, predict_class)
+
+    # Calculates the information gain of each attribute
+    # and stores in a dict.
     gain = {}
     for attribute in L:
-        gain[attribute] = dataset_info - __Info_class(D, attribute, predict_class)
+        gain[attribute] = dataset_info - \
+            __Info_class(D_copy, attribute, predict_class)
     # print(gain)
+
+    # Return the attribute with the maximum info_gain
     v = list(gain.values())
     k = list(gain.keys())
     return k[v.index(max(v))]
