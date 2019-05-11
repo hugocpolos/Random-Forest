@@ -112,12 +112,12 @@ class Template:
 
         # Test Tree Button
         self.TestTree = Button(master, text="Test Forest",
-                                  command=self.print_forest,
-                                  width=12)
+                               command=self.print_forest,
+                               width=12)
         self.TestTree["font"] = stdfont
         self.TestTree["state"] = DISABLED
         self.TestTree.grid(row=0, column=2,
-                              columnspan=2, padx=5, pady=10)
+                           columnspan=2, padx=5, pady=10)
 
     def open_file(self):
         self.filename = filedialog.askopenfilename()
@@ -144,11 +144,12 @@ class Template:
         # Train Forest
         try:
             for training_set in self.db.training_set:
-                self.forest.append(DecisionTree(
-                    training_set,
-                    self.db.attributes,
-                    self.db.predictclass,
-                    self.db.numeric))
+                self.forest.append(
+                    DecisionTree(
+                        training_set,
+                        self.db.attributes,
+                        self.db.predictclass,
+                        self.db.numeric))
             self.Error_Message['text'] = ""
             self.PrintButton['state'] = 'normal'
         except Exception as e:

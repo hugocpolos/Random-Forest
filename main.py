@@ -1,6 +1,7 @@
 from src.Dataset import Dataset
 from src.DecisionTree import DecisionTree
 from sys import argv
+from src.Classifier import Classifier
 
 
 def print_usage(bin_name):
@@ -29,12 +30,25 @@ if __name__ == '__main__':
 
         # load the dataset to memory
         tree_forest = []
+        n = 1000
         db = Dataset(argv[1], delimiter=delimiter,
-                     metadata='data/buysComputer_num_meta.json', bootstrap_n=1000)
+                     metadata='data/buysComputer_meta.json', bootstrap_n=n)
 
         for training_set in db.training_set:
             tree_forest.append(DecisionTree(
                 training_set, db.attributes, db.predictclass, db.numeric))
 
+        # for tree in tree_forest:
+        #     print(tree)
+        print()
+        print('Success: %d tree(s) have been trained' % (n))
+        print('prediction for the following entry:')
+        print(db.test_set[0][0])
+        print(db.predictclass + ':')
+        prediction = {}
         for tree in tree_forest:
-            print(tree)
+            try:
+                prediction[Classifier(db.test_set[0][0], tree)] += 1
+            except KeyError:
+                prediction[Classifier(db.test_set[0][0], tree)] = 1
+        print(prediction)

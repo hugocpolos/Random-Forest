@@ -1,5 +1,7 @@
 from src.InfoGain import best_info_gain
 from src.Colors import Colors as c
+from math import sqrt
+from random import sample
 
 
 def get_most_commom(D, target_class):
@@ -37,12 +39,15 @@ class DecisionTree(object):
                                 otherwise stores the Exception that crashed it.
     """
 
-    def __init__(self, dataset, attributes, predictclass, numerical_attributes):
+    def __init__(self, dataset, attributes, predictclass,
+                 numerical_attributes):
         super(DecisionTree, self).__init__()
         self.dataset = dataset
         self.attributes = attributes.copy()
         self.predictclass = predictclass
         self.numerical_attributes = numerical_attributes
+        self.m = int(sqrt(len(self.attributes)))
+
         self.Tree = None
         self.error = None
         self.__calculate_numerical_cut_value__()
@@ -53,8 +58,7 @@ class DecisionTree(object):
             Public method to create a tree from the loaded dataset
         """
         try:
-            self.Tree = self.__pvt_build_tree_recursive(
-                self.dataset, self.attributes)
+            self.Tree = self.__pvt_build_tree_recursive(self.dataset)
         except Exception as e:
             print(e)
             self.error = e
@@ -68,7 +72,12 @@ class DecisionTree(object):
                 avg_value /= (len(self.dataset))
                 self.numerical_attributes[attrib] = avg_value
 
-    def __pvt_build_tree_recursive(self, D, L):
+    def __attribute_sampling(self):
+        self.m = int(sqrt(len(self.attributes)))
+        return [self.attributes[i]
+                for i in sample(range(0, len(self.attributes)), self.m)]
+
+    def __pvt_build_tree_recursive(self, D):
         """
             Internal method that implements the recursive creation algorithm
         """
@@ -77,6 +86,7 @@ class DecisionTree(object):
         # https://moodle.inf.ufrgs.br/pluginfile.php/135382/mod_resource/content/1/ArvoresDeDecisao.pdf
         # Slide 40
 
+        L = self.__attribute_sampling()
         # 1. Cria Nó N
         new_node = _Node()
 
@@ -110,7 +120,7 @@ class DecisionTree(object):
         # 4.2 Associe A ao nó N
         new_node.set_label(A)
         # 4.3 L = L - {A}
-        L.remove(A)
+        self.attributes.remove(A)
 
         # 4.4 Para cada valor v distinto do atributo A,
         #     considerando os exemplos em D.
@@ -137,10 +147,10 @@ class DecisionTree(object):
             # a classe yi mais frequente em D.
 
             new_node.child['<' + str(self.numerical_attributes[A])] = self.__pvt_build_tree_recursive(
-                Lesser, L)
+                Lesser)
 
             new_node.child['>=' + str(self.numerical_attributes[A])] = self.__pvt_build_tree_recursive(
-                Greater, L)
+                Greater)
             # exit(0)
         else:  # counter armazena um dict com os atributos únicos
             for i in range(len(D)):
@@ -155,10 +165,17 @@ class DecisionTree(object):
                     new_node.set_label(get_most_commom(
                         D, self.predictclass))
                     return new_node
+
                 # 4.4.3 Senão, associe N a uma subárvore retornada por f(Dv,L)
                 else:
                     new_node.child[key] = self.__pvt_build_tree_recursive(
-                        Dv, L)
+                        Dv)
+                    # Heurística, cria um nó chamado except,
+                    # que atende a qualquer valor do atributo
+                    # que o treinamento não conhece.
+                    new_node.child['except'] = _Node()
+                    new_node.child['except'].set_label(get_most_commom(
+                        D, self.predictclass), is_leaf=True)
         # 4.5 Retorne N
         return new_node
 
