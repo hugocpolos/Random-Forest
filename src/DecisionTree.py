@@ -58,7 +58,7 @@ class DecisionTree(object):
             Public method to create a tree from the loaded dataset
         """
         try:
-            self.Tree = self.__pvt_build_tree_recursive(self.dataset)
+            self.Tree = self.__pvt_build_tree_recursive(self.dataset.copy())
         except Exception as e:
             print(e)
             self.error = e
@@ -126,7 +126,7 @@ class DecisionTree(object):
         #     considerando os exemplos em D.
         counter = {}
 
-        # Trecho para tratar algoritmos numericos #
+        # Trecho para tratar atributos numericos #
         if (A in self.numerical_attributes):
             # 4.4.1 Lesser = subconjunto dos dados de treinamento em que
             # A é menor que o valor de corte
@@ -139,7 +139,7 @@ class DecisionTree(object):
 
             if (len(Greater) is 0 or len(Lesser) is 0):
                 new_node.set_label(get_most_commom(
-                    D, self.predictclass))
+                    D, self.predictclass), is_leaf=True)
                 return new_node
 
             # 4.4.2 Se Lesser ou Greater for vazio,
@@ -163,7 +163,7 @@ class DecisionTree(object):
                 # rotulado com a classe yi mais frequente em D.
                 if len(Dv) == 0:
                     new_node.set_label(get_most_commom(
-                        D, self.predictclass))
+                        D, self.predictclass), is_leaf=True)
                     return new_node
 
                 # 4.4.3 Senão, associe N a uma subárvore retornada por f(Dv,L)
