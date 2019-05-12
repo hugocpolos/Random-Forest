@@ -4,7 +4,6 @@ def Classifier(entry, tree):
 
 def __recursive_classifier(entry, node, numerical_attributes):
     node_attribute = node.label
-
     if node_attribute not in numerical_attributes:
         # Categorical Attribute
         # If the node does not know the value for this attribute of the
@@ -22,5 +21,19 @@ def __recursive_classifier(entry, node, numerical_attributes):
                                           numerical_attributes)
     else:
         # Numerical Attribute
-        print('TODO: Calculate category for numerical attribute')
-        return None
+        for key in node.child:
+            if(key[0] == '<'):
+                LESSER = node.child[key]
+            elif(key[0] == '>'):
+                GREATER = node.child[key]
+
+        if (float(entry[node_attribute])<numerical_attributes[node_attribute]):
+            # entry is lesser than the cut value
+            return __recursive_classifier(entry,
+                                          LESSER,
+                                          numerical_attributes)
+        else:
+            # entry is greater than the cut value
+            return __recursive_classifier(entry,
+                                          GREATER,
+                                          numerical_attributes)
