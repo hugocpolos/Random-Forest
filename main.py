@@ -29,22 +29,20 @@ if __name__ == '__main__':
     else:
         delimiter = argv[2] if len(argv) is 3 else ';'
 
-        # load the dataset to memory       
+        # load the dataset to memory
         db = Dataset(argv[1], delimiter=delimiter,
-                     metadata='data/wdbc_meta.json')
+                     metadata='data/buysComputer_meta.json')
 
-        for n in range(1000,1001):
+        for n in range(1, 101):
             # Load the Forest Object
             F = Forest(db, forest_length=n, seed=None)
-        
+
             # Train the Forest
             F.train()
             # F.print()
-            print("n = %s, hit ratio :" %(n), end=' ')
+            print("n = %s, hit ratio :" % (n), end=' ')
 
-        
             # Test the Forest
             F.test()
-
 
         exit(0)
