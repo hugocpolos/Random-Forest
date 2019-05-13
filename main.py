@@ -1,5 +1,6 @@
 from src.Dataset import Dataset
 from src.DecisionTree import DecisionTree
+from src.Forest import Forest
 from sys import argv
 from src.Classifier import Classifier
 
@@ -28,27 +29,22 @@ if __name__ == '__main__':
     else:
         delimiter = argv[2] if len(argv) is 3 else ';'
 
-        # load the dataset to memory
-        tree_forest = []
-        n = 1000
+        # load the dataset to memory       
         db = Dataset(argv[1], delimiter=delimiter,
-                     metadata='data/buysComputer_meta.json', bootstrap_n=n)
+                     metadata='data/wdbc_meta.json')
 
-        for training_set in db.training_set:
-            tree_forest.append(DecisionTree(
-                training_set, db.attributes, db.predictclass, db.numeric))
+        for n in range(1000,1001):
+            # Load the Forest Object
+            F = Forest(db, forest_length=n, seed=None)
+        
+            # Train the Forest
+            F.train()
+            # F.print()
+            print("n = %s, hit ratio :" %(n), end=' ')
 
-        # for tree in tree_forest:
-        #     print(tree)
-        print()
-        print('Success: %d tree(s) have been trained' % (n))
-        print('prediction for the following entry:')
-        print(db.test_set[0][0])
-        print(db.predictclass + ':')
-        prediction = {}
-        for tree in tree_forest:
-            try:
-                prediction[Classifier(db.test_set[0][0], tree)] += 1
-            except KeyError:
-                prediction[Classifier(db.test_set[0][0], tree)] = 1
-        print(prediction)
+        
+            # Test the Forest
+            F.test()
+
+
+        exit(0)

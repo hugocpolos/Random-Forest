@@ -59,8 +59,14 @@ class Dataset(object):
                 d = json.load(json_file)
                 for attrib in d['numeric']:
                     self.numeric[attrib] = 0
-                ignore += d['ignore']
-
+                try:
+                    ignore += d['ignore']
+                except:
+                    ignore = []
+                try:
+                    predictclass = d['predictclass']
+                except:
+                    predictclass = None
         # Reads the csv file to memory
         _dict_ = csv.DictReader(open(filename), delimiter=delimiter)
 
@@ -95,11 +101,7 @@ class Dataset(object):
             for ignored_class in ignore:
                 del a[ignored_class]
 
-        # store a 2d-list of only the values for each attribute
-        # self.values = [list(x.values()) for x in self.data]
-        self.__generate_bootstrap(bootstrap_n)
-
-    def __generate_bootstrap(self, n):
+    def generate_bootstrap(self, n):
         self.training_set = []
         self.test_set = []
         dataset_len = len(self.data)

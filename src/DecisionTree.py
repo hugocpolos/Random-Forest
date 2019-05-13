@@ -68,7 +68,7 @@ class DecisionTree(object):
             if attrib in self.numerical_attributes:
                 avg_value = 0
                 for value in self.dataset:
-                    avg_value += int(value[attrib])
+                    avg_value += float(value[attrib])
                 avg_value /= (len(self.dataset))
                 self.numerical_attributes[attrib] = avg_value
 
