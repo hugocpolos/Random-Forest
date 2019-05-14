@@ -6,7 +6,7 @@ except ImportError:
     from tkinter import *
 
 from src.Dataset import Dataset
-from src.DecisionTree import DecisionTree
+from src.Forest import Forest
 import ntpath
 
 
@@ -95,8 +95,8 @@ class Template:
         ####
 
         # Load Dataset Button
-        self.okBtton = Button(master, text="Generate Forest",
-                              command=self.load_db_and_generate_forest,
+        self.okBtton = Button(master, text="Load Dataset",
+                              command=self.load_db,
                               width=12)
         self.okBtton["font"] = stdfont
         self.okBtton["state"] = DISABLED
@@ -128,36 +128,48 @@ class Template:
         self.filename_meta = filedialog.askopenfilename()
         self.filename_meta_label['text'] = ntpath.basename(self.filename_meta)
 
-    def load_db_and_generate_forest(self):
-        self.forest = []
+    def load_db(self):
         # Load DB
+        try:
+            self.db.close()
+        except AttributeError:
+            # db is not set
+            pass
         try:
             self.db = Dataset(
                 self.filename,
                 delimiter=self.delimiter_char.get(),
-                metadata=self.filename_meta,
-                bootstrap_n=self.T_value.get())
-            self.Error_Message['text'] = ""
+                metadata=self.filename_meta)
+            self.Error_Message['fg'] = "#267f36"
+            self.Error_Message['text'] = "Dataset has been loaded successfully"
         except Exception as e:
+            self.Error_Message['fg'] = "#ff3c3c"
             self.Error_Message['text'] = e
             return
+
+    def train_tree(self):
         # Train Forest
         try:
-            for training_set in self.db.training_set:
-                self.forest.append(
-                    DecisionTree(
-                        training_set,
-                        self.db.attributes,
-                        self.db.predictclass,
-                        self.db.numeric))
-            self.Error_Message['text'] = ""
+            self.Forest.close()
+        except AttributeError:
+            # db is not set
+            pass
+        try:
+            self.Forest = Forest(
+                self.db, forest_length=self.T_value.get(), seed=None)
+            self.Error_Message['fg'] = "#267f36"
+            self.Error_Message['text'] = "Forest has been trained successfully"
             self.PrintButton['state'] = 'normal'
         except Exception as e:
+            self.Error_Message['fg'] = "#ff3c3c"
             self.Error_Message['text'] = e
 
     def print_forest(self):
-        for tree in self.forest:
-            print(tree)
+        try:
+            self.Forest.show()
+        except Exception as e:
+            self.Error_Message['fg'] = "#ff3c3c"
+            self.Error_Message['text'] = e
 
 
 if __name__ == '__main__':

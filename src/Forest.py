@@ -1,5 +1,7 @@
 from src.DecisionTree import DecisionTree
 from src.Classifier import Classifier
+from src.Bootstrap import Bootstrap
+from src.CrossValidation import CrossValidation
 import random
 
 
