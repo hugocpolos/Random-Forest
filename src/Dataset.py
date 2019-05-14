@@ -138,3 +138,6 @@ class Dataset(object):
                 body += "%-15s" % (row[index])
             body += '\033[0m\n'
         return header + body
+
+    def close(self):
+        del(self)

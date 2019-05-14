@@ -2,8 +2,10 @@ from src.DecisionTree import DecisionTree
 from src.Classifier import Classifier
 import random
 
+
 class Forest(object):
     """docstring for Forest"""
+
     def __init__(self, dataset_object, forest_length=1, seed=None):
         super(Forest, self).__init__()
         self.db = dataset_object
@@ -21,14 +23,14 @@ class Forest(object):
 
     def classify(self, entry):
         predictions = {}
-        
-        ## Fill a dict with all the predictions and its scores.
+
+        # Fill a dict with all the predictions and its scores.
         for tree in self.Forest:
             try:
                 predictions[Classifier(entry, tree)] += 1
             except KeyError:
                 predictions[Classifier(entry, tree)] = 1
-        ## Get the most voted prediction
+        # Get the most voted prediction
         max = 0
         max_prediction = None
         for p in predictions:
@@ -40,8 +42,8 @@ class Forest(object):
     def test(self):
         # Test the Forest with the Bootstrap Generated test set
         hit_fail_matrix = {
-            'hit':0,
-            'fail':0
+            'hit': 0,
+            'fail': 0
         }
         test = self.db.test_set[0]
         for entry in test:
@@ -49,9 +51,13 @@ class Forest(object):
                 hit_fail_matrix['hit'] += 1
             else:
                 hit_fail_matrix['fail'] += 1
-        print(hit_fail_matrix['hit']/(hit_fail_matrix['hit']+hit_fail_matrix['fail'])*100, end=' ')
+        print(hit_fail_matrix['hit'] / (hit_fail_matrix['hit'] +
+                                        hit_fail_matrix['fail']) * 100, end=' ')
         print(hit_fail_matrix)
 
-    def print(self):
+    def show(self):
         for tree in self.Forest:
             print(tree)
+
+    def close(self):
+        del(self)
