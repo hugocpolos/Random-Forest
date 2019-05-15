@@ -4,7 +4,7 @@ class CrossValidation(object):
     def __init__(self, data):
         super(CrossValidation, self).__init__()
         self.data = data
-        self.fold = []
+        self.folds = []
 
     def generate_folds(self, k=10):
         self.folds = split(self.data, k)

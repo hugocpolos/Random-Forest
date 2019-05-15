@@ -6,7 +6,7 @@ class Bootstrap(object):
 
     def __init__(self, data):
         super(Bootstrap, self).__init__()
-        # self.data = data
+        self.data = data
         self.training_set = []
         self.test_set = []
 
@@ -23,5 +23,3 @@ class Bootstrap(object):
             test_set = [self.data[i] for i in test_lottery]
             self.training_set.append(train_set)
             self.test_set.append(test_set)
-
-            print(self.training_set)
