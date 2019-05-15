@@ -136,4 +136,4 @@ if __name__ == '__main__':
                 print('Training the forest with the dataset')
                 print(test_set)
                 print('Test Results:')
-            F.test(test_set, debug)
+            print(F.test(test_set, debug))

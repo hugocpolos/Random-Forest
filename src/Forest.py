@@ -55,6 +55,7 @@ class Forest(object):
         if debug:
             print(100*hit_fail_matrix['hit'] / (hit_fail_matrix['hit'] + hit_fail_matrix['fail']), end=' ')
             print(hit_fail_matrix)
+        return hit_fail_matrix
 
     def show(self):
         for tree in self.Forest:
