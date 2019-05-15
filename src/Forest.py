@@ -6,13 +6,11 @@ import random
 class Forest(object):
     """docstring for Forest"""
 
-    def __init__(self, dataset_object, forest_length=1, seed=None):
+    def __init__(self, dataset_object, forest_length=1):
         super(Forest, self).__init__()
         self.db = dataset_object
         self.T = forest_length
         self.Forest = []
-        if seed is not None:
-            random.seed(int(seed))
         self.evaluation = {}
 
     def train(self, training_set):
@@ -41,8 +39,8 @@ class Forest(object):
                 max_prediction = p
         return max_prediction
 
-    def test(self, dataset):
-        # Test the Forest with the Bootstrap Generated test set
+    def test(self, dataset, debug=False):
+        # Test the Forest with a given dataset
 
         hit_fail_matrix = {
             'hit': 0,
@@ -54,9 +52,9 @@ class Forest(object):
                 hit_fail_matrix['hit'] += 1
             else:
                 hit_fail_matrix['fail'] += 1
-        print(hit_fail_matrix['hit'] / ((hit_fail_matrix['hit'] +
-                                         hit_fail_matrix['fail']) * 100), end=' ')
-        print(hit_fail_matrix)
+        if debug:
+            print(100*hit_fail_matrix['hit'] / (hit_fail_matrix['hit'] + hit_fail_matrix['fail']), end=' ')
+            print(hit_fail_matrix)
 
     def show(self):
         for tree in self.Forest:
