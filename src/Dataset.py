@@ -32,7 +32,7 @@ class Dataset(object):
     """
 
     def __init__(self, filename, delimiter=';', predictclass=None, ignore=[],
-                 metadata=None, bootstrap_n=1):
+                 metadata=None):
         super(Dataset, self).__init__()
 
         # Test the args
@@ -49,9 +49,6 @@ class Dataset(object):
         if (type(metadata) is not str and metadata is not None):
             raise TypeError("metadata must be a string.")
 
-        if (type(bootstrap_n) is not int):
-            raise TypeError("bootstrap_n must be a integer.")
-
         # Load the metadata
         self.numeric = {}
         if metadata is not None:
@@ -61,11 +58,11 @@ class Dataset(object):
                     self.numeric[attrib] = 0
                 try:
                     ignore += d['ignore']
-                except:
+                except KeyError:
                     ignore = []
                 try:
                     predictclass = d['predictclass']
-                except:
+                except KeyError:
                     predictclass = None
         # Reads the csv file to memory
         _dict_ = csv.DictReader(open(filename), delimiter=delimiter)
@@ -101,22 +98,6 @@ class Dataset(object):
             for ignored_class in ignore:
                 del a[ignored_class]
 
-    def generate_bootstrap(self, n):
-        self.training_set = []
-        self.test_set = []
-        dataset_len = len(self.data)
-        for index in range(n):
-            train_lottery = [randint(0, dataset_len - 1)
-                             for i in range(dataset_len)]
-
-            test_lottery = [i for i in range(
-                dataset_len) if i not in train_lottery]
-
-            train_set = [self.data[i] for i in train_lottery]
-            test_set = [self.data[i] for i in test_lottery]
-            self.training_set.append(train_set)
-            self.test_set.append(test_set)
-
     def __str__(self):
         """
             Method to print the Dataset object into the terminal
@@ -138,3 +119,6 @@ class Dataset(object):
                 body += "%-15s" % (row[index])
             body += '\033[0m\n'
         return header + body
+
+    def close(self):
+        del(self)
