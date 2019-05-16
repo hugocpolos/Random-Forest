@@ -85,6 +85,7 @@ if __name__ == '__main__':
             print('Db loaded:')
             print("Attributes: %s\nPredict Class: %s\nNumerical Classes: %s" %
                   (db.attributes, db.predictclass, db.numeric))
+
         # Create k Folds of the dataset
         cv = CrossValidation(db.data)
         cv.generate_folds(k_fold_value)
@@ -144,15 +145,16 @@ if __name__ == '__main__':
                 print('Testing the forest with the dataset')
                 print(test_set)
                 print('Test Results:')
+
             print('%d: ' % (i + 1))
             print(F.test(test_set, debug))
 
             # F1-measure:
             (real_labels, pred_labels) = F.test(test_set, debug)
-            confusion_matrix = ConfusionMatrix.create_confusion_matrix(real_labels, pred_labels, db.get_target_attribute_values())
+            confusion_matrix = ConfusionMatrix.create_confusion_matrix(
+                real_labels, pred_labels, db.get_target_attribute_values())
             f1 = Metrics.f1measure(confusion_matrix)
 
-            
             print('Confusion Matrix')
             print(confusion_matrix)
             print('F1-measure:', f1)

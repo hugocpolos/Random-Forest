@@ -1,3 +1,6 @@
+import random
+
+
 class CrossValidation(object):
     """docstring for CrossValidation"""
 
@@ -6,7 +9,9 @@ class CrossValidation(object):
         self.data = data
         self.folds = []
 
-    def generate_folds(self, k=10):
+    def generate_folds(self, k=10, Pre_Shuffle=True):
+        if Pre_Shuffle:
+            random.shuffle(self.data)
         self.folds = split(self.data, k)
 
 
