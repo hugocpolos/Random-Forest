@@ -64,6 +64,11 @@ class Dataset(object):
                     predictclass = d['predictclass']
                 except KeyError:
                     predictclass = None
+                try:
+                    self.target_attribute_values = d['target_attribute_values']
+                except KeyError:
+                    self.target_attribute_values = []
+
         # Reads the csv file to memory
         _dict_ = csv.DictReader(open(filename), delimiter=delimiter)
 
@@ -97,6 +102,9 @@ class Dataset(object):
         for a in self.data:
             for ignored_class in ignore:
                 del a[ignored_class]
+
+    def get_target_attribute_values(self):
+        return self.target_attribute_values
 
     def __str__(self):
         """
