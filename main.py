@@ -8,17 +8,17 @@ import src.ConfusionMatrix as ConfusionMatrix
 import random
 
 
-def generate_fold_train_set(data, fold_index):
+def generate_train_set_from_folds_except_n(data, n, forest_lenght):
     ret = []
 
-    for i in range(len(data[0])):
-        dataset = []
-        for j in range(len(data)):
-            if(j != fold_index):
-                for elem in data[j][i]:
-                    dataset.append(elem)
-        ret.append(dataset)
-    return ret
+    for i in range(len(data)):
+        if i != n:
+            for sample in data[i]:
+                ret.append(sample)
+
+    bs = Bootstrap(ret)
+    bs.generate_bootstrap(forest_lenght)
+    return bs.training_set
 
 
 def print_usage(bin_name):
@@ -101,7 +101,7 @@ if __name__ == '__main__':
 
         Forest_list = []
         for i in range(k_fold_value):
-            training_set = generate_fold_train_set(Bootstrap_training_set, i)
+            training_set = generate_train_set_from_folds_except_n(cv.folds, n=i, forest_lenght=n)
             if debug:
                 print(
                     'For the fold %d as test set, generated the following training set:' % (i + 1))
