@@ -87,8 +87,8 @@ if __name__ == '__main__':
                   (db.attributes, db.predictclass, db.numeric))
 
         # Create k Folds of the dataset
-        cv = CrossValidation(db.data)
-        cv.generate_folds(k_fold_value)
+        cv = CrossValidation(db.data, db.predictclass)
+        cv.generate_stratified_folds(k_fold_value)
 
         if debug:
             print('Generated %d folds Successfully' % (k_fold_value))
@@ -99,25 +99,6 @@ if __name__ == '__main__':
                 count += 1
                 print(fold)
 
-        # generate a bootstrap for each fold
-        Bootstrap_training_set = []
-        for fold in cv.folds:
-            bs = Bootstrap(fold)
-            bs.generate_bootstrap(n)
-            Bootstrap_training_set.append(bs.training_set)
-
-        if debug:
-            print('Successfully generated a bootstrap training set for each fold')
-            print('Training Sets:')
-            count = 1
-            for t_set in Bootstrap_training_set:
-                print('%d' % (count))
-                count += 1
-                print(t_set)
-
-        # Create a List of Trained Forests,
-        # each forest is trained with k-1 folds,
-        # and trained with k=i fold
         Forest_list = []
         for i in range(k_fold_value):
             training_set = generate_fold_train_set(Bootstrap_training_set, i)
