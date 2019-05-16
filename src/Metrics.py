@@ -1,6 +1,6 @@
 import numpy as np
-import ConfusionMatrix
-import Forest
+import src.ConfusionMatrix as ConfusionMatrix
+from src.Forest import Forest
 
 def true_positives(confusion_matrix, class_index):
     return confusion_matrix[class_index, class_index]

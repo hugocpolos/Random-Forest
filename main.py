@@ -3,6 +3,8 @@ from src.Forest import Forest
 from sys import argv
 from src.Bootstrap import Bootstrap
 from src.CrossValidation import CrossValidation
+import src.Metrics as Metrics
+import src.ConfusionMatrix as ConfusionMatrix
 import random
 
 
@@ -138,3 +140,9 @@ if __name__ == '__main__':
                 print('Test Results:')
             print('%d: ' % (i + 1))
             print(F.test(test_set, debug))
+
+            # F1-measure:
+            (real_labels, pred_labels) = F.test(test_set, debug)
+            confusion_matrix = ConfusionMatrix.create_confusion_matrix(real_labels, pred_labels, db.get_target_attribute_values())
+            f1 = Metrics.f1measure(confusion_matrix)
+            print('F1-measure:', f1)
