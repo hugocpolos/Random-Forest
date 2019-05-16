@@ -1,6 +1,5 @@
 from src.DecisionTree import DecisionTree
 from src.Classifier import Classifier
-import random
 
 
 class Forest(object):
@@ -42,19 +41,12 @@ class Forest(object):
     def test(self, dataset, debug=False):
         # Test the Forest with a given dataset
 
-        hit_fail_matrix = {
-            'hit': 0,
-            'fail': 0
-        }
-
+        real_class = [i[self.db.predictclass] for i in dataset]
+        predict_class = []
         for entry in dataset:
-            if self.classify(entry) == entry[self.db.predictclass]:
-                hit_fail_matrix['hit'] += 1
-            else:
-                hit_fail_matrix['fail'] += 1
-        if debug:
-            print(100*hit_fail_matrix['hit'] / (hit_fail_matrix['hit'] + hit_fail_matrix['fail']), end=' ')
-        return hit_fail_matrix
+            predict_class.append(self.classify(entry))
+
+        return(real_class, predict_class)
 
     def show(self):
         for tree in self.Forest:
