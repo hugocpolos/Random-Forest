@@ -1,4 +1,5 @@
 {
 	"numeric":["age"],
-	"ignore":""
+	"ignore":"",
+	"target_attribute_values":["yes", "no"]
 }
