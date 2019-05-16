@@ -18,6 +18,9 @@ def recall(tp, fn):
      fn : int
         false negatives
     """
+
+    # print('recall(tp: ' + str(tp) + ', fn: ' + str(fn) + ')')
+
     return tp/(tp+fn)
 
 def precision(tp, fp):
@@ -27,6 +30,8 @@ def precision(tp, fp):
     fp : int
         false positives
     """
+
+    # print('precision(tp: ' + str(tp) + ', fp: ' + str(fp) + ')')
 
     return tp/(tp+fp)
 

@@ -151,4 +151,8 @@ if __name__ == '__main__':
             (real_labels, pred_labels) = F.test(test_set, debug)
             confusion_matrix = ConfusionMatrix.create_confusion_matrix(real_labels, pred_labels, db.get_target_attribute_values())
             f1 = Metrics.f1measure(confusion_matrix)
+
+            
+            print('Confusion Matrix')
+            print(confusion_matrix)
             print('F1-measure:', f1)
