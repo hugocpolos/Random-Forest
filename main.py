@@ -6,14 +6,16 @@ from src.CrossValidation import CrossValidation
 import random
 
 
-def generate_dataset_from_2_intervals(a, b):
+def generate_fold_train_set(data, fold_index):
     ret = []
-    for __set in a:
-        for item in __set:
-            ret.append(item)
-    for __set in b:
-        for item in __set:
-            ret.append(item)
+
+    for i in range(len(data[0])):
+        dataset = []
+        for j in range(len(data)):
+            if(j != fold_index):
+                for elem in data[j][i]:
+                    dataset.append(elem)
+        ret.append(dataset)
     return ret
 
 
@@ -28,7 +30,7 @@ def print_usage(bin_name):
             [--meta, -m]        json metadata filename
             [--seed, -s]        random for pseudo-random number generation,
                                 random value if a seed is not set
-            [--length, -l, -m]  forent-length, the default value is 1
+            [--length, -l, -n]  forent-length, the default value is 1
             [--k-fold, -k]      number of folds for cross validation, the
                                 default value is 10
             [--print, -p]       print the forest
@@ -93,7 +95,6 @@ if __name__ == '__main__':
                 print('%d' % (count))
                 count += 1
                 print(fold)
-            print('------------')
 
         # generate a bootstrap for each fold
         Bootstrap_training_set = []
@@ -110,30 +111,35 @@ if __name__ == '__main__':
                 print('%d' % (count))
                 count += 1
                 print(t_set)
-            print('------------')
 
         # Create a List of Trained Forests,
         # each forest is trained with k-1 folds,
         # and trained with k=i fold
         Forest_list = []
         for i in range(k_fold_value):
-            training_set = generate_dataset_from_2_intervals(
-                Bootstrap_training_set[0:i], Bootstrap_training_set[i + 1:])
-            test_set = Bootstrap_training_set[i][0]
+            training_set = generate_fold_train_set(Bootstrap_training_set, i)
+            if debug:
+                print(
+                    'For the fold %d as test set, generated the following training set:' % (i + 1))
+                print(training_set)
+
+            test_set = cv.folds[i]
+            if debug:
+                print()
+                print('test set:')
+                print(test_set)
+
             F = Forest(db, n)
             F.train(training_set)
 
             if debug:
                 print('Successfully trained a forest')
-                print(
-                    'Trained with folds 1 - %s, except fold %d, that will be used for testing'
-                    % (k_fold_value, i + 1))
                 print('Resultant Forest:')
-            if debug or to_print:
+            if to_print:
                 F.show()
 
             if debug:
-                print('Training the forest with the dataset')
+                print('Testing the forest with the dataset')
                 print(test_set)
                 print('Test Results:')
             print('%d: ' % (i + 1))
