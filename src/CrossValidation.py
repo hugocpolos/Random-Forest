@@ -4,13 +4,13 @@ import random
 class CrossValidation(object):
     """docstring for CrossValidation"""
 
-    def __init__(self, data, predictclass):
+    def __init__(self, data, target_attribute):
         super(CrossValidation, self).__init__()
         self.data = data
-        self.predictclass = predictclass
+        self.target_attribute = target_attribute
         self.folds = []
         self.possible_classes = list(dict.fromkeys(
-            [d[predictclass] for d in data]))
+            [d[target_attribute] for d in data]))
         self.generate_data_for_each_class()
         self.count_classes()
 
@@ -18,16 +18,16 @@ class CrossValidation(object):
         self.data_per_class = {}
         for class_ in self.possible_classes:
             self.data_per_class[class_] = [
-                c for c in self.data if c[self.predictclass] == class_]
+                c for c in self.data if c[self.target_attribute] == class_]
 
     def count_classes(self):
         class_counter = {}
 
         for d in self.data:
             try:
-                class_counter[d[self.predictclass]] += 1
+                class_counter[d[self.target_attribute]] += 1
             except KeyError:
-                class_counter[d[self.predictclass]] = 1
+                class_counter[d[self.target_attribute]] = 1
 
         self.class_counter = class_counter
 

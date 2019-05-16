@@ -84,10 +84,10 @@ if __name__ == '__main__':
         if debug:
             print('Db loaded:')
             print("Attributes: %s\nPredict Class: %s\nNumerical Classes: %s" %
-                  (db.attributes, db.predictclass, db.numeric))
+                  (db.attributes, db.target_attribute, db.numeric))
 
         # Create k Folds of the dataset
-        cv = CrossValidation(db.data, db.predictclass)
+        cv = CrossValidation(db.data, db.target_attribute)
         cv.generate_stratified_folds(k_fold_value)
 
         if debug:
