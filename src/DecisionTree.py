@@ -39,12 +39,12 @@ class DecisionTree(object):
                                 otherwise stores the Exception that crashed it.
     """
 
-    def __init__(self, dataset, attributes, predictclass,
+    def __init__(self, dataset, attributes, target_attribute,
                  numerical_attributes):
         super(DecisionTree, self).__init__()
         self.dataset = dataset
         self.attributes = attributes.copy()
-        self.predictclass = predictclass
+        self.target_attribute = target_attribute
         self.numerical_attributes = numerical_attributes
         self.m = int(sqrt(len(self.attributes)))
 
@@ -87,15 +87,16 @@ class DecisionTree(object):
         # Slide 40
 
         L = self.__attribute_sampling()
+        self.__calculate_numerical_cut_value__()
         # 1. Cria Nó N
         new_node = _Node()
 
         # 2. Se todos os exemplos em D possuem a mesma classe y,
         # então retorna N como um nó folha rotulado com y.
-        class_to_compare = D[0][self.predictclass]
+        class_to_compare = D[0][self.target_attribute]
         all_classes_equal = True
         for i in range(len(D)):
-            if (class_to_compare != D[i][self.predictclass]):
+            if (class_to_compare != D[i][self.target_attribute]):
                 all_classes_equal = False
         if all_classes_equal is True:
             new_node.set_label(class_to_compare, is_leaf=True)
@@ -106,7 +107,7 @@ class DecisionTree(object):
 
         if len(L) == 0:
             new_node.set_label(get_most_commom(
-                D, self.predictclass), is_leaf=True)
+                D, self.target_attribute), is_leaf=True)
             return new_node
 
         # 4.Senão
@@ -114,7 +115,7 @@ class DecisionTree(object):
         # Esse cálculo será realizado utilizando o método de ganho
         # de informação.
 
-        A = best_info_gain(D, L, self.predictclass,
+        A = best_info_gain(D, L, self.target_attribute,
                            self.numerical_attributes)
 
         # 4.2 Associe A ao nó N
@@ -139,7 +140,7 @@ class DecisionTree(object):
 
             if (len(Greater) is 0 or len(Lesser) is 0):
                 new_node.set_label(get_most_commom(
-                    D, self.predictclass), is_leaf=True)
+                    D, self.target_attribute), is_leaf=True)
                 return new_node
 
             # 4.4.2 Se Lesser ou Greater for vazio,
@@ -163,7 +164,7 @@ class DecisionTree(object):
                 # rotulado com a classe yi mais frequente em D.
                 if len(Dv) == 0:
                     new_node.set_label(get_most_commom(
-                        D, self.predictclass), is_leaf=True)
+                        D, self.target_attribute), is_leaf=True)
                     return new_node
 
                 # 4.4.3 Senão, associe N a uma subárvore retornada por f(Dv,L)
@@ -175,7 +176,7 @@ class DecisionTree(object):
                     # que o treinamento não conhece.
                     new_node.child['except'] = _Node()
                     new_node.child['except'].set_label(get_most_commom(
-                        D, self.predictclass), is_leaf=True)
+                        D, self.target_attribute), is_leaf=True)
         # 4.5 Retorne N
         return new_node
 
@@ -195,7 +196,7 @@ class DecisionTree(object):
             print('fim')
             exit(0)
         if(node.is_leaf):
-            retval += "   %s:%s\n" % (self.predictclass,
+            retval += "   %s:%s\n" % (self.target_attribute,
                                       c.OKGREEN + node.label + c.ENDC)
         else:
             retval += 'label: %s\n' % (c.OKBLUE + node.label + c.ENDC)
