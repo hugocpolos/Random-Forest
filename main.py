@@ -43,19 +43,21 @@ def print_usage(bin_name):
 
         """ % (bin_name))
 
+
 def load_dataset_into_memory():
     # load the dataset into memory
     db = Dataset(filename, delimiter=delimiter,
-                    metadata=metadata)
+                 metadata=metadata)
     if debug:
         print('Db loaded:')
         print("Attributes: %s\nPredict Class: %s\nNumerical Classes: %s" %
-                (db.attributes, db.predictclass, db.numeric))
+              (db.attributes, db.target_attribute, db.numeric))
     return db
+
 
 def create_k_folds_from_dataset(k, dataset):
     # Create k Folds of the dataset
-    cv = CrossValidation(dataset.data, dataset.predictclass)
+    cv = CrossValidation(dataset.data, dataset.target_attribute)
     cv.generate_stratified_folds(k)
 
     if debug:
@@ -66,13 +68,15 @@ def create_k_folds_from_dataset(k, dataset):
             print('%d' % (count))
             count += 1
             print(fold)
-    
+
     return cv
+
 
 def train_k_forests(k, cv, database, ntree):
     forest_list = []
     for i in range(k):
-        training_set = generate_train_set_from_folds_except_n(cv.folds, n=i, forest_lenght=ntree)
+        training_set = generate_train_set_from_folds_except_n(
+            cv.folds, n=i, forest_lenght=ntree)
         if debug:
             print(
                 'For the fold %d as test set, generated the following training set:' % (i + 1))
@@ -86,10 +90,11 @@ def train_k_forests(k, cv, database, ntree):
             print('Resultant Forest:')
         if to_print:
             F.show()
-        
+
         forest_list.append(F)
-    
+
     return forest_list
+
 
 def test_forest_list(forest_list, cv, database):
 
@@ -100,7 +105,8 @@ def test_forest_list(forest_list, cv, database):
         test_set = cv.folds[i]
 
         (real_labels, pred_labels) = forest.test(test_set, debug)
-        confusion_matrix = ConfusionMatrix.create_confusion_matrix(real_labels, pred_labels, classes)
+        confusion_matrix = ConfusionMatrix.create_confusion_matrix(
+            real_labels, pred_labels, classes)
         f1measure += Metrics.f1measure(confusion_matrix)
 
         if debug:
@@ -110,12 +116,13 @@ def test_forest_list(forest_list, cv, database):
 
             print('%d: ' % (i + 1))
             print(confusion_matrix)
-    
+
     f1measure /= len(forest_list)
     if debug:
         print('Mean F1-Measure: ', f1measure)
 
     return f1measure
+
 
 if __name__ == '__main__':
     if len(argv) is 1:
@@ -162,19 +169,19 @@ if __name__ == '__main__':
 
         if n2 > 0:  # then ntree analysis
                     # ntree varies from -n to -n2 (argument values)
-        
+
             f1_mean_list = []
 
-            for i in range(n, n2+1):
-                
+            for i in range(n, n2 + 1):
+
                 forest_list = train_k_forests(k_fold_value, cv, db, i)
-                f1_mean = test_forest_list(forest_list, cv, db)        
+                f1_mean = test_forest_list(forest_list, cv, db)
                 f1_mean_list.append(f1_mean)
 
-            Plot.plot_to_png(range(n, n2+1), f1_mean_list, 'f1measure')
+            Plot.plot_to_png(range(n, n2 + 1), f1_mean_list, 'f1measure')
 
         else:       # then just train and test a single forest
-            
+
             forest_list = train_k_forests(k_fold_value, cv, db, n)
             f1_mean = test_forest_list(forest_list, cv, db)
             print(f1_mean)
