@@ -1,5 +1,6 @@
 from src.Dataset import Dataset
 from src.DecisionTree import DecisionTree
+import random
 from sys import argv
 
 
@@ -18,7 +19,7 @@ def print_usage(bin_name):
 
 
 if __name__ == '__main__':
-    if len(argv) == 0:
+    if len(argv) == 1:
         print_usage(argv[0])
         exit(0)
     else:
