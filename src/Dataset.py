@@ -31,15 +31,15 @@ class Dataset(object):
 
     """
 
-    def __init__(self, filename, delimiter=';', predictclass=None, ignore=[],
+    def __init__(self, filename, delimiter=';', target_attribute=None, ignore=[],
                  metadata=None):
         super(Dataset, self).__init__()
 
         # Test the args
         if (type(delimiter) is not str) and (len(delimiter) is not 1):
             raise TypeError("delimiter must be a single character string.")
-        if (type(predictclass) is not str) and (predictclass is not None):
-            raise TypeError("predictclass must be a string.")
+        if (type(target_attribute) is not str) and (target_attribute is not None):
+            raise TypeError("target_attribute must be a string.")
         if (type(ignore) is not list):
             if(type(ignore) is str):
                 ignore = [ignore]
@@ -61,9 +61,9 @@ class Dataset(object):
                 except KeyError:
                     ignore = []
                 try:
-                    predictclass = d['predictclass']
+                    target_attribute = d['target_attribute']
                 except KeyError:
-                    predictclass = None
+                    target_attribute = None
                 try:
                     self.target_attribute_values = d['target_attribute_values']
                 except KeyError:
@@ -79,17 +79,17 @@ class Dataset(object):
         # the default value is the last attribute.
         # If the predict class was passed, it is tested to check if
         # the class exists in the dataset.
-        if predictclass is None:
-            self.predictclass = self.attributes[-1]
+        if target_attribute is None:
+            self.target_attribute = self.attributes[-1]
         else:
-            self.predictclass = predictclass
-            if self.predictclass not in self.attributes:
+            self.target_attribute = target_attribute
+            if self.target_attribute not in self.attributes:
                 raise Exception(
                     "Class '%s' was not found in %s"
-                    % (self.predictclass, filename))
+                    % (self.target_attribute, filename))
 
         # Removes the predict class of the attribute list
-        self.attributes.remove(self.predictclass)
+        self.attributes.remove(self.target_attribute)
 
         # Removes the ignored attributes of the attribute list
         for ignored_class in ignore:
@@ -117,7 +117,7 @@ class Dataset(object):
         header = '\033[95m'
         for attrib in self.attributes:
             header += "%-15s" % (attrib)
-        header += '\033[94m%-15s' % (self.predictclass)
+        header += '\033[94m%-15s' % (self.target_attribute)
         header += '\033[0m'
         body = "\n"
         for row in self.values:

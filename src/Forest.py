@@ -17,7 +17,7 @@ class Forest(object):
             self.Forest.append(DecisionTree(
                 train_set,
                 self.db.attributes,
-                self.db.predictclass,
+                self.db.target_attribute,
                 self.db.numeric))
 
     def classify(self, entry):
@@ -41,7 +41,7 @@ class Forest(object):
     def test(self, dataset, debug=False):
         # Test the Forest with a given dataset
 
-        real_class = [i[self.db.predictclass] for i in dataset]
+        real_class = [i[self.db.target_attribute] for i in dataset]
         predict_class = []
         for entry in dataset:
             predict_class.append(self.classify(entry))
