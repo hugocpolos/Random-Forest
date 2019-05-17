@@ -40,14 +40,15 @@ class DecisionTree(object):
     """
 
     def __init__(self, dataset, attributes, target_attribute,
-                 numerical_attributes):
+                 numerical_attributes, single_tree_print=False):
         super(DecisionTree, self).__init__()
         self.dataset = dataset
         self.attributes = attributes.copy()
         self.target_attribute = target_attribute
         self.numerical_attributes = numerical_attributes
         self.m = int(sqrt(len(self.attributes)))
-
+        self.single_tree_print_mode = single_tree_print
+        self.iteration_count = 0
         self.Tree = None
         self.error = None
         self.__calculate_numerical_cut_value__()
@@ -85,9 +86,21 @@ class DecisionTree(object):
         # given algorithm especification (pt-br)
         # https://moodle.inf.ufrgs.br/pluginfile.php/135382/mod_resource/content/1/ArvoresDeDecisao.pdf
         # Slide 40
+        if(self.single_tree_print_mode):
+            print('----------------------------------------------------------')
+            print("iteration %d:" % (self.iteration_count))
+            self.iteration_count += 1
+            if(len(self.attributes) > 0):
+                print("Available Attributes:\n%s" % (self.attributes))
+            else:
+                print('Leaf node')
 
         L = self.__attribute_sampling()
         self.__calculate_numerical_cut_value__()
+
+        if(self.single_tree_print_mode and len(self.attributes) > 0):
+            print('Attribute sampling:\n%s' % (L))
+
         # 1. Cria Nó N
         new_node = _Node()
 
@@ -100,6 +113,8 @@ class DecisionTree(object):
                 all_classes_equal = False
         if all_classes_equal is True:
             new_node.set_label(class_to_compare, is_leaf=True)
+            if(self.single_tree_print_mode):
+                print('label: %s' % (new_node.label))
             return new_node
 
         # 3. Se L é vazia, então retorn N como um nó folha
@@ -108,16 +123,21 @@ class DecisionTree(object):
         if len(L) == 0:
             new_node.set_label(get_most_commom(
                 D, self.target_attribute), is_leaf=True)
+            if(self.single_tree_print_mode):
+                print('label: %s' % (new_node.label))
             return new_node
 
         # 4.Senão
         # 4.1 A = atributo que apresenta melhor critério de divisão.
         # Esse cálculo será realizado utilizando o método de ganho
         # de informação.
-
+        if(self.single_tree_print_mode):
+            print('Cálculo de Ganho de informação:')
         A = best_info_gain(D, L, self.target_attribute,
-                           self.numerical_attributes)
+                           self.numerical_attributes, single_tree_print=self.single_tree_print_mode)
 
+        if(self.single_tree_print_mode):
+            print('\'%s\' Selected' % (A))
         # 4.2 Associe A ao nó N
         new_node.set_label(A)
         # 4.3 L = L - {A}

@@ -2,13 +2,18 @@ import math
 import copy
 
 
-def best_info_gain(D, L, predict_class, numerical_attributes):
+def best_info_gain(D, L, predict_class, numerical_attributes, single_tree_print=False):
     # Creates a copy of the dataset to be handled
     D_copy = copy.deepcopy(D)
 
     # Split the numerical values beetwen A-> less than the cut value
     # and B -> greater or equal to the cut value to make the best info gain
     # calculation
+    if (single_tree_print):
+        print('For the dataset:')
+        for d in D_copy:
+            print(d)
+
     for attrib in L:
         if attrib in numerical_attributes:
             avg_val = numerical_attributes[attrib]
@@ -28,7 +33,8 @@ def best_info_gain(D, L, predict_class, numerical_attributes):
     for attribute in L:
         gain[attribute] = dataset_info - \
             __Info_class(D_copy, attribute, predict_class)
-    # print(gain)
+    if (single_tree_print):
+        print(gain)
 
     # Return the attribute with the maximum info_gain
     v = list(gain.values())
