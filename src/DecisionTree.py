@@ -114,7 +114,8 @@ class DecisionTree(object):
         if all_classes_equal is True:
             new_node.set_label(class_to_compare, is_leaf=True)
             if(self.single_tree_print_mode):
-                print('label: %s' % (new_node.label))
+                print('All samples have the same classification.')
+                print('Returning label: %s' % (new_node.label))
             return new_node
 
         # 3. Se L é vazia, então retorn N como um nó folha

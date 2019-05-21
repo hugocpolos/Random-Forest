@@ -40,6 +40,7 @@ def print_usage(bin_name):
                                 default value is 10
             [--print, -p]       print the forest
             [--debug]           debug the program with print
+            [--output, -o]      name of the output image file, default is f1measure
 
         """ % (bin_name))
 
@@ -138,6 +139,7 @@ if __name__ == '__main__':
         to_print = False
         k_fold_value = 10
         debug = False
+        output_image_name = "f1measure"
 
         for i in range(len(argv)):
             if(argv[i] in ['--file', '-f']):
@@ -158,6 +160,8 @@ if __name__ == '__main__':
                 debug = True
             elif(argv[i] in ['k-fold', '-k']):
                 k_fold_value = int(argv[i + 1])
+            elif(argv[i] in ['--output', '-o']):
+                output_image_name = argv[i + 1]
             elif(argv[i] in ['--help', '-h']):
                 print_usage(argv[0])
                 exit(0)
@@ -178,7 +182,7 @@ if __name__ == '__main__':
                 f1_mean = test_forest_list(forest_list, cv, db)
                 f1_mean_list.append(f1_mean)
 
-            Plot.plot_to_png(range(n, n2 + 1), f1_mean_list, 'f1measure')
+            Plot.plot_to_png(range(n, n2 + 1), f1_mean_list, output_image_name)
 
         else:       # then just train and test a single forest
 
